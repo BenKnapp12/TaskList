@@ -1,23 +1,15 @@
-import express from "express";
+const express = require('express');
 const app = express();
-export default app;
+require('dotenv').config();
 
-app.use((err, req, res, next) => {
-  switch (err.code) {
-    // Invalid type
-    case "22P02":
-      return res.status(400).send(err.message);
-    // Unique constraint violation
-    case "23505":
-    // Foreign key violation
-    case "23503":
-      return res.status(400).send(err.detail);
-    default:
-      next(err);
-  }
-});
+const usersRoutes = require('./Routes/users');
+const tasksRoutes = require('./Routes/tasks');
 
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send("Sorry! Something went wrong.");
-});
+
+app.use(express.json());
+const tasksRouter = require('./Routes/tasks');
+app.use('/api/tasks', tasksRouter);
+app.use('/users', usersRoutes);
+app.use('/tasks', tasksRoutes);
+
+module.exports = app;
